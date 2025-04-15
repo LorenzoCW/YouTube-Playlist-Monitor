@@ -1,0 +1,6 @@
+dotenv
+Flask
+google-api-python-client
+google-cloud-firestore
+plotly
+pytz

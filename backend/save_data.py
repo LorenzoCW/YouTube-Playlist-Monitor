@@ -10,7 +10,7 @@ import datetime
 
 # Configurações
 debug = False
-debug_time = 3
+debug_time = 2
 
 TIMEZONE = pytz.timezone("America/Sao_Paulo")
 TODAY_STRING = ""
@@ -84,22 +84,27 @@ def upload_data(db, video_count, total_minutes):
             "video_count": video_count,
             "total_minutes": total_minutes
         }, merge=True)
-        return message("Dados salvos.", True)
+        return message(f"Dados para {TODAY_STRING} salvos.", True)
     
     except Exception as e:
         message(f"Erro ao salvar dados: {str(e)}", True)
         return
 
-def upload_status(db, title, status):
+def upload_status(db, title, status, success=False):
     message(f"Salvando status '{title}'...")
 
     try:
         last_title = title + "_timestamp"
 
+        # timestamp = datetime.datetime.now(TIMEZONE).isoformat()
+        timestamp = datetime.datetime.now(TIMEZONE)
+        formatted_time = timestamp.strftime('%d/%m/%Y %H:%M:%S')
+
         doc_ref = db.collection("status").document("playlist_status")
         doc_ref.set({
             title: status,
-            last_title: datetime.datetime.now(TIMEZONE).isoformat()
+            last_title: formatted_time,
+            "success": success
         }, merge=True)
         message(f"Status salvo.")
 
@@ -128,8 +133,8 @@ def check_data(db):
         doc = doc_ref.get()
         if not doc.exists:  # Não há dados no dia atual
             return message("Dados ainda não inseridos no banco.")
-        warning_message = message(f"Dados para {TODAY_STRING} já salvos.", True)
-        upload_status(db, "final_result", warning_message)
+        info_message = message(f"Dados para {TODAY_STRING} já salvos.", True)
+        upload_status(db, "final_result", info_message, True)
         return
     
     except Exception as e:
@@ -270,10 +275,10 @@ def calculate_changes(values, title):
     last_week_added   = sum(c for c in last_week_changes if c > 0)
     last_week_removed = sum(c for c in last_week_changes if c < 0)
 
-    # mudanças dia a dia no último mês (até 30 dias)
+    # mudanças dia a dia no último mês (até 28 dias)
     last_month_changes = [
         values[-i] - values[-i - 1]
-        for i in range(1, min(30, len(values)))
+        for i in range(1, min(28, len(values)))
     ]
     last_month_added   = sum(c for c in last_month_changes if c > 0)
     last_month_removed = sum(c for c in last_month_changes if c < 0)
@@ -289,7 +294,7 @@ def calculate_changes(values, title):
     # diferenças pontuais
     last_day_difference    = values[-1] - values[-2] if len(values) > 1 else 0
     last_week_difference   = values[-1] - values[-7] if len(values) > 7 else 0
-    last_month_difference  = values[-1] - values[-30] if len(values) > 30 else 0
+    last_month_difference  = values[-1] - values[-28] if len(values) > 28 else 0
     total_difference       = values[-1] - values[0]
 
     # médias
@@ -328,8 +333,8 @@ def calculate_changes(values, title):
         "total_average_change": total_average_change,
     }
 
-def load_change_indicator(values):
-    message(f"Calculando indicador de mudança para '{values}'...")
+def load_change_indicator(values, title):
+    message(f"Calculando indicador de mudança para {title}...")
     if len(values) > 1:
         if values[-1] > values[-2]:
             return "↑"
@@ -382,7 +387,7 @@ def collect_and_save(playlist_id, youtube_api_key, db):
     if not data_uploaded: return
 
     # Salva o status de resultado final
-    upload_status(db, "final_result", data_uploaded)
+    upload_status(db, "final_result", data_uploaded, True)
     return message("Fluxo de coletar e salvar dados finalizado.")
 
 def parse_and_save_data(db):
@@ -394,7 +399,7 @@ def parse_and_save_data(db):
     full_data, month_data = parse_data(data)
     
     upload_calc(db, "parsed_data", "points_array", "month_data", month_data)
-    upload_calc(db, "parsed_data", "points_array", "full_data", full_data)
+    # upload_calc(db, "parsed_data", "points_array", "full_data", full_data)
     
     message("Fluxo de salvar lista de pontos finalizado.")
     return full_data
@@ -411,8 +416,8 @@ def calc_and_save_data(db, data):
     video_changes = calculate_changes(video_counts, "vídeos")
     minute_changes = calculate_changes(total_minutes, "minutos")
     
-    video_change_indicator = load_change_indicator(video_counts)
-    minute_change_indicator = load_change_indicator(total_minutes)
+    video_change_indicator = load_change_indicator(video_counts, "vídeos")
+    minute_change_indicator = load_change_indicator(total_minutes, "minutos")
     video_changes["change_indicator"] = video_change_indicator
     minute_changes["change_indicator"] = minute_change_indicator
 
@@ -432,7 +437,7 @@ def calc_and_save_data(db, data):
 
 def main():
     
-    message("\n\nIniciando script...", True)
+    message("Iniciando script...\n", True)
 
     playlist_id, youtube_api_key, db = init()
 
@@ -444,7 +449,7 @@ def main():
 
     calc_and_save_data(db, data)
 
-    message("\n\nScript finalizado.", True)
+    message("Script finalizado.\n", True)
 
 if __name__ == "__main__":
     main()

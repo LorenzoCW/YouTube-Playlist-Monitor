@@ -1,0 +1,86 @@
+body {
+  background-color: #111111;
+  color: #f1f1f1;
+  font-family: sans-serif;
+}
+
+/* Todas as infos */
+.container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-left: 80px;
+  margin-right: 0px;
+}
+
+/* Info de mudanças */
+.box2 {
+  /* Mudar espaçamento entre as tabelas box1 e box2 */
+  width: 70%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Cada info */
+.item {
+  /* Mudar espaçamento entre as tabelas da box2 */
+  width: 25%;
+}
+
+.status {
+  color: red;
+}
+
+.tabbed-table {
+  /* Mudar espaçamento entre os itens de cada tabela da box2 */
+  width: 80%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family: sans-serif;
+}
+
+.tabbed-table th,
+.tabbed-table td {
+  /*border: 1px solid #ccc;*/
+  padding-bottom: 10px;
+  width: 120px;
+}
+
+.tabbed-table td.tabbed {
+  text-align: right;
+  padding-right: 10px;
+  width: 80px;
+}
+
+@media (max-width: 1700px) {
+
+  .title {
+    transform: translateX(-5px);
+  }
+
+  h3 {
+    padding-top: 10px;
+  }
+
+  .container {
+    flex-direction: column;
+    margin-left: 10px;
+  }
+
+  .box1,
+  .box2 {
+    width: 100%;
+  }
+
+  .box2 {
+    display: block;
+  }
+
+  .item {
+    width: 100%;
+  }
+
+  .tabbed-table {
+    width: 100%;
+  }
+}

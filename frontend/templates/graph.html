@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Youtube Playlist Monitor</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="box1">
+      <h1 class="title">Youtube Playlist Monitor</h1>
+      <p>
+        <!--Vídeos-->
+        {{ video_changes.change_indicator }}
+        {{ video_changes.current_videos }} vídeos
+        {{ ' | ' if video_changes.current_minutes > 0 or video_changes.current_hours > 0 }}
+        <!--Minutos-->
+        {{ minute_changes.change_indicator if video_changes.current_minutes > 0 or video_changes.current_hours > 0 }}
+        {{ video_changes.current_hours if video_changes.current_hours > 0 }}{{ 'h:' if video_changes.current_hours > 0 }}
+        {{ video_changes.current_minutes if video_changes.current_minutes > 0 or video_changes.current_hours > 0 }}{{ 'm' if video_changes.current_minutes > 0 or video_changes.current_hours > 0 }}
+      </p>
+
+      <p>Média de minutos por vídeo: {{ minute_changes.minutes_per_video }}m</p>
+	  
+	  <h4 class="status">
+	  {{ status.final_result_timestamp if status.success == False }}
+	  {{ ' - ' if status.success == False }}
+	  {{ status.final_result if status.success == False }}
+	  </h4>
+    </div>
+
+    <div class="box2">
+      <div class="item">
+        <h1>Mudanças</h1>
+        <h3>Ontem</h3>
+        <table class="tabbed-table">
+          <tbody>
+            <tr>
+              <td>Diferença:</td>
+              <td class="tabbed">
+                {{ '+' if video_changes.last_day_difference > 0 else '- ' if video_changes.last_day_difference < 0}}&nbsp;{{ video_changes.last_day_difference*-1 if video_changes.last_day_difference < 0 else video_changes.last_day_difference }} </td>
+              <td class="tabbed">
+                {{ '+' if minute_changes.last_day_difference > 0 else '- ' if minute_changes.last_day_difference < 0}}&nbsp;{{ minute_changes.last_day_difference*-1 if minute_changes.last_day_difference < 0 else minute_changes.last_day_difference }}m </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="item">
+        <h3>Semana anterior</h3>
+        <table class="tabbed-table">
+          <tbody>
+            <tr>
+              <td>Diferença:</td>
+              <td class="tabbed">
+                {{ '+' if video_changes.last_week_difference > 0 else '- ' if video_changes.last_week_difference < 0 }}&nbsp;{{ video_changes.last_week_difference*-1 if video_changes.last_week_difference < 0 else video_changes.last_week_difference }} </td>
+              <td class="tabbed">
+                {{ '+' if minute_changes.last_week_difference > 0 else '- ' if minute_changes.last_week_difference < 0 }}&nbsp;{{ minute_changes.last_week_difference*-1 if minute_changes.last_week_difference < 0 else minute_changes.last_week_difference }}m </td>
+            </tr>
+            <tr>
+              <td>Adicionados:</td>
+              <td class="tabbed">
+                {{ '+' if video_changes.last_week_added > 0 else '- ' if video_changes.last_week_added < 0 }}&nbsp;{{ video_changes.last_week_added*-1 if video_changes.last_week_added < 0 else video_changes.last_week_added }} </td>
+              <td class="tabbed">
+                {{ '+' if minute_changes.last_week_added > 0 else '- ' if minute_changes.last_week_added < 0 }}&nbsp;{{ minute_changes.last_week_added*-1 if minute_changes.last_week_added < 0 else minute_changes.last_week_added }}m </td>
+            </tr>
+            <tr>
+              <td>Removidos:</td>
+              <td class="tabbed">
+                {{ '+' if video_changes.last_week_removed > 0 else '- ' if video_changes.last_week_removed < 0 }}&nbsp;{{ video_changes.last_week_removed*-1 if video_changes.last_week_removed < 0 else video_changes.last_week_removed }} </td>
+              <td class="tabbed">
+                {{ '+' if minute_changes.last_week_removed > 0 else '- ' if minute_changes.last_week_removed < 0 }}&nbsp;{{ minute_changes.last_week_removed*-1 if minute_changes.last_week_removed < 0 else minute_changes.last_week_removed }}m </td>
+            </tr>
+            <tr>
+              <td>Média:</td>
+              <td class="tabbed">
+                {{ '+' if video_changes.last_week_average_change > 0 else '- ' if video_changes.last_week_average_change < 0 }}&nbsp;{{ video_changes.last_week_average_change*-1 if video_changes.last_week_average_change < 0 else video_changes.last_week_average_change }} </td>
+              <td class="tabbed">
+                {{ '+' if minute_changes.last_week_average_change > 0 else '- ' if minute_changes.last_week_average_change < 0 }}&nbsp;{{ minute_changes.last_week_average_change*-1 if minute_changes.last_week_average_change < 0 else minute_changes.last_week_average_change }}m </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="item">
+        <h3>Mês anterior</h3>
+        <table class="tabbed-table">
+          <tbody>
+            <tr>
+              <td>Diferença:</td>
+              <td class="tabbed">
+                {{ '+' if video_changes.last_month_difference > 0 else '- ' if video_changes.last_month_difference < 0 }}&nbsp;{{ video_changes.last_month_difference*-1 if video_changes.last_month_difference < 0 else video_changes.last_month_difference }} </td>
+              <td class="tabbed">
+                {{ '+' if minute_changes.last_month_difference > 0 else '- ' if minute_changes.last_month_difference < 0 }}&nbsp;{{ minute_changes.last_month_difference*-1 if minute_changes.last_month_difference < 0 else minute_changes.last_month_difference }}m </td>
+            </tr>
+            <tr>
+              <td>Adicionados:</td>
+              <td class="tabbed">
+                {{ '+' if video_changes.last_month_added > 0 else '- ' if video_changes.last_month_added < 0 }}&nbsp;{{ video_changes.last_month_added*-1 if video_changes.last_month_added < 0 else video_changes.last_month_added }} </td>
+              <td class="tabbed">
+                {{ '+' if minute_changes.last_month_added > 0 else '- ' if minute_changes.last_month_added < 0 }}&nbsp;{{ minute_changes.last_month_added*-1 if minute_changes.last_month_added < 0 else minute_changes.last_month_added }}m </td>
+            </tr>
+            <tr>
+              <td>Removidos:</td>
+              <td class="tabbed">
+                {{ '+' if video_changes.last_month_removed > 0 else '- ' if video_changes.last_month_removed < 0 }}&nbsp;{{ video_changes.last_month_removed*-1 if video_changes.last_month_removed < 0 else video_changes.last_month_removed }} </td>
+              <td class="tabbed">
+                {{ '+' if minute_changes.last_month_removed > 0 else '- ' if minute_changes.last_month_removed < 0 }}&nbsp;{{ minute_changes.last_month_removed*-1 if minute_changes.last_month_removed < 0 else minute_changes.last_month_removed }}m </td>
+            </tr>
+            <tr>
+              <td>Média:</td>
+              <td class="tabbed">
+                {{ '+' if video_changes.last_month_average_change > 0 else '- ' if video_changes.last_month_average_change < 0 }}&nbsp;{{ video_changes.last_month_average_change*-1 if video_changes.last_month_average_change < 0 else video_changes.last_month_average_change }} </td>
+              <td class="tabbed">
+                {{ '+' if minute_changes.last_month_average_change > 0 else '- ' if minute_changes.last_month_average_change < 0 }}&nbsp;{{ minute_changes.last_month_average_change*-1 if minute_changes.last_month_average_change < 0 else minute_changes.last_month_average_change }}m </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="item">
+        <h3>Começo</h3>
+        <table class="tabbed-table">
+          <tbody>
+            <tr>
+              <td>Diferença:</td>
+              <td class="tabbed">
+                {{ '+' if video_changes.total_difference > 0 else '- ' if video_changes.total_difference < 0 }}&nbsp;{{ video_changes.total_difference*-1 if video_changes.total_difference < 0 else video_changes.total_difference }} </td>
+              <td class="tabbed">
+                {{ '+' if minute_changes.total_difference > 0 else '- ' if minute_changes.total_difference < 0 }}&nbsp;{{ minute_changes.total_difference*-1 if minute_changes.total_difference < 0 else minute_changes.total_difference }}m </td>
+            </tr>
+            <tr>
+              <td>Adicionados:</td>
+              <td class="tabbed">
+                {{ '+' if video_changes.total_added > 0 else '- ' if video_changes.total_added < 0 }}&nbsp;{{ video_changes.total_added*-1 if video_changes.total_added < 0 else video_changes.total_added }} </td>
+              <td class="tabbed">
+                {{ '+' if minute_changes.total_added > 0 else '- ' if minute_changes.total_added < 0 }}&nbsp;{{ minute_changes.total_added*-1 if minute_changes.total_added < 0 else minute_changes.total_added }}m </td>
+            </tr>
+            <tr>
+              <td>Removidos:</td>
+              <td class="tabbed">
+                {{ '+' if video_changes.total_removed > 0 else '- ' if video_changes.total_removed < 0 }}&nbsp;{{ video_changes.total_removed*-1 if video_changes.total_removed < 0 else video_changes.total_removed }} </td>
+              <td class="tabbed">
+                {{ '+' if minute_changes.total_removed > 0 else '- ' if minute_changes.total_removed < 0 }}&nbsp;{{ minute_changes.total_removed*-1 if minute_changes.total_removed < 0 else minute_changes.total_removed }}m </td>
+            </tr>
+            <tr>
+              <td>Média:</td>
+              <td class="tabbed">
+                {{ '+' if video_changes.total_average_change > 0 else '- ' if video_changes.total_average_change < 0 }}&nbsp;{{ video_changes.total_average_change*-1 if video_changes.total_average_change < 0 else video_changes.total_average_change }} </td>
+              <td class="tabbed">
+                {{ '+' if minute_changes.total_average_change > 0 else '- ' if minute_changes.total_average_change < 0 }}&nbsp;{{ minute_changes.total_average_change*-1 if minute_changes.total_average_change < 0 else minute_changes.total_average_change }}m </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="graphs">
+    {{ video_graph | safe }}
+    {{ minute_graph | safe }}
+  </div>
+
+</body>
+
+</html>

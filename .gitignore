@@ -1,3 +1,6 @@
 .env
 config/
 venv/
+node_modules/
+dist/
+package-lock.json

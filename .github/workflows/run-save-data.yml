@@ -2,7 +2,7 @@ name: Executar save_data.py todo dia à meia-noite
 
 on:
   schedule:
-    - cron: '0 22 * * *'
+    - cron: '35 22 * * *'
 
 jobs:
   run-save-data:
@@ -23,17 +23,6 @@ jobs:
           echo "PLAYLIST_ID=$PLAYLIST_ID" >> .env
           echo "YOUTUBE_API_KEY=$YOUTUBE_API_KEY" >> .env
           echo "FIREBASE_CREDENTIALS_PATH=$FIREBASE_CREDENTIALS_PATH" >> .env
-
-      - name: Criar diretório para credenciais do Firebase
-        run: |
-          mkdir -p $(dirname "$FIREBASE_CREDENTIALS_PATH")
-
-      - name: Criar arquivo de credenciais Firebase
-        run: |
-          echo "${{ secrets.FIREBASE_CREDENTIALS }}" | base64 -d > "$FIREBASE_CREDENTIALS_PATH"
-
-      - name: Exportar GOOGLE_APPLICATION_CREDENTIALS
-        run: echo "GOOGLE_APPLICATION_CREDENTIALS=$FIREBASE_CREDENTIALS_PATH" >> $GITHUB_ENV
 
       - name: Configurar Python
         uses: actions/setup-python@v4

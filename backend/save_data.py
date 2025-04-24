@@ -9,8 +9,8 @@ import logging
 import datetime
 
 # Configurações
-debug = False
-debug_time = 2
+debug = True
+debug_time = 1
 
 TIMEZONE = pytz.timezone("America/Sao_Paulo")
 TODAY_STRING = ""

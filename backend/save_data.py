@@ -1,6 +1,7 @@
 from googleapiclient.discovery import build
 from dotenv import load_dotenv
 from google.cloud import firestore
+import tempfile
 import pytz
 import os
 import re
@@ -48,22 +49,32 @@ def load_keys():
 
     return playlist_id, youtube_api_key, firebase_credentials_path
 
-def set_environment(firebase_credentials_path):
-    if os.path.exists(firebase_credentials_path):
-        message(f"Credenciais encontradas em '{firebase_credentials_path}'.")
-    else:
-        message(f"Não foi possível obter credenciais de autenticação do firebase em '{firebase_credentials_path}', tentando localmente...")
-        firebase_credentials_path = "config/firebase.json"
-        if os.path.exists(firebase_credentials_path):
-            message(f"Credenciais encontradas em '{firebase_credentials_path}'.")
-        else:
-            message(f"Não foi possível obter credenciais de autenticação do firebase em '{firebase_credentials_path}'.")
-            return
+def check_environment(firebase_credentials_info):
+    message("Checando se a info é caminho (arquivo local) ou info json (variável secreta)")
 
-    return firebase_credentials_path
+    try:
+        if os.path.exists(firebase_credentials_info):
+            message(f"Credenciais encontradas localmente no arquivo '{firebase_credentials_info}'.")
+            return firebase_credentials_info
+    except Exception as e:
+        message(f"Erro ao verificar o arquivo local: {str(e)}")
+    
+    message(f"Não foi possível obter credenciais em um arquivo local, buscando na variável secreta...")
+    try:
+        fd, temp_firebase_credentials_path = tempfile.mkstemp(prefix="firebase_", suffix=".json")
+        with os.fdopen(fd, "w") as f:
+            f.write(firebase_credentials_info)
+        message(f"Arquivo temporário com as credenciais criado em: '{temp_firebase_credentials_path}'.")
+        return temp_firebase_credentials_path
+    except Exception as e:
+        message(f"Erro ao definir variável: {str(e)}")
+    
+    return
+
 
 def init_firestore(firebase_credentials_path):
     message("Conectando ao Firestore...")
+
     try:
         db = firestore.Client.from_service_account_json(firebase_credentials_path)
         message("Conexão ao Firestore estabelecida.")
@@ -150,7 +161,7 @@ def authenticate_youtube(db, youtube_api_key):
         message("Autenticação concluída.")
         return authentication
     except Exception as e:
-        error_message = message(f"Erro na autenticação: {e}", True)
+        error_message = message(f"Erro na autenticação: {str(e)}", True)
         upload_status(db, "final_result", error_message)
         return
 
@@ -356,12 +367,16 @@ def init():
     playlist_id, youtube_api_key, firebase_credentials_path = load_keys()
 
     # Definir ambiente
-    firebase_credentials_path = set_environment(firebase_credentials_path)
-    if not firebase_credentials_path: return message("Execução finalizada com falha.", True)
+    firebase_credentials_path = check_environment(firebase_credentials_path)
+    if not firebase_credentials_path:
+        message("Execução finalizada com falha.", True)
+        return None, None, None
 
     # Faz a conexão com o firebase
     db = init_firestore(firebase_credentials_path)
-    if not db: return message("Execução finalizada com falha.", True)
+    if not db:
+        message("Execução finalizada com falha.", True)
+        return None, None, None
 
     message("Paramêtros inicializados.")
     return playlist_id, youtube_api_key, db
@@ -440,6 +455,7 @@ def main():
     message("Iniciando script...\n", True)
 
     playlist_id, youtube_api_key, db = init()
+    if not playlist_id or not youtube_api_key or not db: return
 
     response = collect_and_save(playlist_id, youtube_api_key, db)
     if not response: return

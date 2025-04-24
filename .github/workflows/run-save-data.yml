@@ -2,7 +2,7 @@ name: Executar save_data.py todo dia à meia-noite
 
 on:
   schedule:
-    - cron: '0 15 * * *'
+    - cron: '0 22 * * *'
 
 jobs:
   run-save-data:
@@ -12,7 +12,7 @@ jobs:
     env:
       PLAYLIST_ID: ${{ secrets.PLAYLIST_ID }}
       YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-      FIREBASE_CREDENTIALS_PATH: config/firebase.json
+      FIREBASE_CREDENTIALS_PATH: ${{ secrets.FIREBASE_CREDENTIALS_PATH }}
 
     steps:
       - name: Fazer checkout do repositório

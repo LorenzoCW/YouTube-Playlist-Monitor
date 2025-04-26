@@ -6,11 +6,9 @@ interface ChartProps {
   color: string;
 }
 
-// export default function Chart({ data, title, color }) {
 const Chart: React.FC<ChartProps> = ({ data, title, color }) => {
   const x = data.map(pt => pt.x);
   const y = data.map(pt => pt.y);
-  const latest = y.length ? y[y.length - 1] : 0;
 
   return (
     <Plot
@@ -20,22 +18,31 @@ const Chart: React.FC<ChartProps> = ({ data, title, color }) => {
         type: 'scatter',
         mode: 'lines+markers',
         marker: { color },
-        name: `${title}: ${latest}`
+        name: title,
+        hovertemplate: '%{x|%d/%m} - %{y}<extra></extra>'
       }]}
       layout={{
         plot_bgcolor: '#111111',
         paper_bgcolor: '#111111',
         title: {
           text: title,
-          font: { color: '#f1f1f1' },
+          font: { color: '#6e6e6e' },
         },
-        xaxis: { title: 'Data', color: '#f1f1f1' },
-        yaxis: { title, color: '#f1f1f1' },
+        xaxis: {
+          title: 'Data',
+          color: '#f1f1f1',
+          tickformat: '%d/%m'
+        },
+        yaxis: {
+          title,
+          color: color,
+          side: 'right'
+        },
         height: 375
       }}
       style={{ width: '100%' }}
     />
   );
-}
+};
 
 export default Chart;

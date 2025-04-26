@@ -105,123 +105,139 @@ function App() {
     return `${indicator === '' ? sign : indicator} ${abs}${suffix}`;
   }
 
+  const parseDate = (dateString: any) => {
+    if (!dateString) return null;
+
+    const [day, month, yearAndTime] = dateString.split('/');
+    const [year, time] = yearAndTime.split(' ');
+
+    return new Date(`${year}-${month}-${day}T${time}`);
+  };
+
+  const today = new Date();
+  const resultTimestamp = parseDate(status?.final_result_timestamp);
+  const isSameDay = resultTimestamp && today.toDateString() === resultTimestamp.toDateString();
+
   return (
-    <div className="container">
-      <header className="box1">
-        <h1 className="title">Youtube Playlist Monitor</h1>
-        <p>
-          {formatChange(videoChanges?.current_videos ?? 0, ' vídeos', videoChanges?.change_indicator ?? '')}
-          {(videoChanges?.current_minutes || videoChanges?.current_hours) && ' | '}
-          {formatChange(videoChanges?.current_hours ?? 0, 'h :', minuteChanges?.change_indicator ?? '')}{formatChange(videoChanges?.current_minutes ?? 0, 'm', ' ')}
-        </p>
-        <p>Média de minutos por vídeo: {formatChange(minuteChanges?.minutes_per_video ?? 0, 'm', ' ')}</p>
-        {status?.success === false && (
-          <h4 className="status">
-            {status.final_result_timestamp} - {status.final_result}
-          </h4>
-        )}
-      </header>
+    <div>
+      <div className="container">
+        <header className="box1">
+          <h1 className="title">Youtube Playlist Monitor</h1>
+          <p>
+            {formatChange(videoChanges?.current_videos ?? 0, ' vídeos', videoChanges?.change_indicator ?? '')}
+            {(videoChanges?.current_minutes || videoChanges?.current_hours) && ' | '}
+            {formatChange(videoChanges?.current_hours ?? 0, 'h :', minuteChanges?.change_indicator ?? '')}{formatChange(videoChanges?.current_minutes ?? 0, 'm', ' ')}
+          </p>
+          <p>Média de minutos por vídeo: {formatChange(minuteChanges?.minutes_per_video ?? 0, 'm', ' ')}</p>
 
-      <section className="box2">
-        <div className="item">
-          <h2>Mudanças</h2>
-          <h3>Ontem</h3>
-          <table className="tabbed-table">
-            <tbody>
-              <tr>
-                <td>Diferença:</td>
-                <td className="tabbed">{formatChange(videoChanges?.last_day_difference ?? 0)}</td>
-                <td className="tabbed">{formatChange(minuteChanges?.last_day_difference ?? 0, 'm')}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <p className="date">{status?.final_result_timestamp}</p>
+          <div className="date">
+            {!isSameDay
+              ? " - Atualizando..."
+              : (status?.success === false && (<p className="status">- {status.final_result}</p>))}
+          </div>
+        </header>
 
-        <div className="item">
-          <h3>Semana anterior</h3>
-          <table className="tabbed-table">
-            <tbody>
-              <tr>
-                <td>Diferença:</td>
-                <td className="tabbed">{formatChange(videoChanges?.last_week_difference ?? 0)}</td>
-                <td className="tabbed">{formatChange(minuteChanges?.last_week_difference ?? 0, 'm')}</td>
-              </tr>
-              <tr>
-                <td>Adicionados:</td>
-                <td className="tabbed">{formatChange(videoChanges?.last_week_added ?? 0)}</td>
-                <td className="tabbed">{formatChange(minuteChanges?.last_week_added ?? 0, 'm')}</td>
-              </tr>
-              <tr>
-                <td>Removidos:</td>
-                <td className="tabbed">{formatChange(videoChanges?.last_week_removed ?? 0)}</td>
-                <td className="tabbed">{formatChange(minuteChanges?.last_week_removed ?? 0, 'm')}</td>
-              </tr>
-              <tr>
-                <td>Média:</td>
-                <td className="tabbed">{formatChange(videoChanges?.last_week_average_change ?? 0)}</td>
-                <td className="tabbed">{formatChange(minuteChanges?.last_week_average_change ?? 0, 'm')}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <section className="box2">
+          <div className="item">
+            <h2>Mudanças</h2>
+            <h3>Ontem</h3>
+            <table className="tabbed-table">
+              <tbody>
+                <tr>
+                  <td>Diferença:</td>
+                  <td className="tabbed">{formatChange(videoChanges?.last_day_difference ?? 0)}</td>
+                  <td className="tabbed">{formatChange(minuteChanges?.last_day_difference ?? 0, 'm')}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-        <div className="item">
-          <h3>Mês anterior</h3>
-          <table className="tabbed-table">
-            <tbody>
-              <tr>
-                <td>Diferença:</td>
-                <td className="tabbed">{formatChange(videoChanges?.last_month_difference ?? 0)}</td>
-                <td className="tabbed">{formatChange(minuteChanges?.last_month_difference ?? 0, 'm')}</td>
-              </tr>
-              <tr>
-                <td>Adicionados:</td>
-                <td className="tabbed">{formatChange(videoChanges?.last_month_added ?? 0)}</td>
-                <td className="tabbed">{formatChange(minuteChanges?.last_month_added ?? 0, 'm')}</td>
-              </tr>
-              <tr>
-                <td>Removidos:</td>
-                <td className="tabbed">{formatChange(videoChanges?.last_month_removed ?? 0)}</td>
-                <td className="tabbed">{formatChange(minuteChanges?.last_month_removed ?? 0, 'm')}</td>
-              </tr>
-              <tr>
-                <td>Média:</td>
-                <td className="tabbed">{formatChange(videoChanges?.last_month_average_change ?? 0)}</td>
-                <td className="tabbed">{formatChange(minuteChanges?.last_month_average_change ?? 0, 'm')}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <div className="item">
+            <h3>Semana anterior</h3>
+            <table className="tabbed-table">
+              <tbody>
+                <tr>
+                  <td>Diferença:</td>
+                  <td className="tabbed">{formatChange(videoChanges?.last_week_difference ?? 0)}</td>
+                  <td className="tabbed">{formatChange(minuteChanges?.last_week_difference ?? 0, 'm')}</td>
+                </tr>
+                <tr>
+                  <td>Adicionados:</td>
+                  <td className="tabbed">{formatChange(videoChanges?.last_week_added ?? 0)}</td>
+                  <td className="tabbed">{formatChange(minuteChanges?.last_week_added ?? 0, 'm')}</td>
+                </tr>
+                <tr>
+                  <td>Removidos:</td>
+                  <td className="tabbed">{formatChange(videoChanges?.last_week_removed ?? 0)}</td>
+                  <td className="tabbed">{formatChange(minuteChanges?.last_week_removed ?? 0, 'm')}</td>
+                </tr>
+                <tr>
+                  <td>Média:</td>
+                  <td className="tabbed">{formatChange(videoChanges?.last_week_average_change ?? 0)}</td>
+                  <td className="tabbed">{formatChange(minuteChanges?.last_week_average_change ?? 0, 'm')}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-        <div className="item">
-          <h3>Começo</h3>
-          <table className="tabbed-table">
-            <tbody>
-              <tr>
-                <td>Diferença:</td>
-                <td className="tabbed">{formatChange(videoChanges?.total_difference ?? 0)}</td>
-                <td className="tabbed">{formatChange(minuteChanges?.total_difference ?? 0, 'm')}</td>
-              </tr>
-              <tr>
-                <td>Adicionados:</td>
-                <td className="tabbed">{formatChange(videoChanges?.total_added ?? 0)}</td>
-                <td className="tabbed">{formatChange(minuteChanges?.total_added ?? 0, 'm')}</td>
-              </tr>
-              <tr>
-                <td>Removidos:</td>
-                <td className="tabbed">{formatChange(videoChanges?.total_removed ?? 0)}</td>
-                <td className="tabbed">{formatChange(minuteChanges?.total_removed ?? 0, 'm')}</td>
-              </tr>
-              <tr>
-                <td>Média:</td>
-                <td className="tabbed">{formatChange(videoChanges?.total_average_change ?? 0)}</td>
-                <td className="tabbed">{formatChange(minuteChanges?.total_average_change ?? 0, 'm')}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+          <div className="item">
+            <h3>Mês anterior</h3>
+            <table className="tabbed-table">
+              <tbody>
+                <tr>
+                  <td>Diferença:</td>
+                  <td className="tabbed">{formatChange(videoChanges?.last_month_difference ?? 0)}</td>
+                  <td className="tabbed">{formatChange(minuteChanges?.last_month_difference ?? 0, 'm')}</td>
+                </tr>
+                <tr>
+                  <td>Adicionados:</td>
+                  <td className="tabbed">{formatChange(videoChanges?.last_month_added ?? 0)}</td>
+                  <td className="tabbed">{formatChange(minuteChanges?.last_month_added ?? 0, 'm')}</td>
+                </tr>
+                <tr>
+                  <td>Removidos:</td>
+                  <td className="tabbed">{formatChange(videoChanges?.last_month_removed ?? 0)}</td>
+                  <td className="tabbed">{formatChange(minuteChanges?.last_month_removed ?? 0, 'm')}</td>
+                </tr>
+                <tr>
+                  <td>Média:</td>
+                  <td className="tabbed">{formatChange(videoChanges?.last_month_average_change ?? 0)}</td>
+                  <td className="tabbed">{formatChange(minuteChanges?.last_month_average_change ?? 0, 'm')}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
+          <div className="item">
+            <h3>Começo</h3>
+            <table className="tabbed-table">
+              <tbody>
+                <tr>
+                  <td>Diferença:</td>
+                  <td className="tabbed">{formatChange(videoChanges?.total_difference ?? 0)}</td>
+                  <td className="tabbed">{formatChange(minuteChanges?.total_difference ?? 0, 'm')}</td>
+                </tr>
+                <tr>
+                  <td>Adicionados:</td>
+                  <td className="tabbed">{formatChange(videoChanges?.total_added ?? 0)}</td>
+                  <td className="tabbed">{formatChange(minuteChanges?.total_added ?? 0, 'm')}</td>
+                </tr>
+                <tr>
+                  <td>Removidos:</td>
+                  <td className="tabbed">{formatChange(videoChanges?.total_removed ?? 0)}</td>
+                  <td className="tabbed">{formatChange(minuteChanges?.total_removed ?? 0, 'm')}</td>
+                </tr>
+                <tr>
+                  <td>Média:</td>
+                  <td className="tabbed">{formatChange(videoChanges?.total_average_change ?? 0)}</td>
+                  <td className="tabbed">{formatChange(minuteChanges?.total_average_change ?? 0, 'm')}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
       <section className="graphs">
         <Chart data={videoPoints} title="Vídeos" color="firebrick" />
         <Chart data={minutePoints} title="Minutos" color="dodgerblue" />

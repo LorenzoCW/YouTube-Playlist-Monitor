@@ -29,6 +29,12 @@ body {
 
 .status {
   color: red;
+  display: inline;
+  margin: 0 5px;
+}
+
+.date {
+  display: inline;
 }
 
 .graphs {

@@ -239,8 +239,8 @@ function App() {
         </section>
       </div>
       <section className="graphs">
-        <Chart data={videoPoints} title="Vídeos" color="firebrick" />
-        <Chart data={minutePoints} title="Minutos" color="dodgerblue" />
+        <Chart data={videoPoints} chartTitle="Vídeos" color="firebrick" />
+        <Chart data={minutePoints} chartTitle="Minutos" color="dodgerblue" />
       </section>
     </div>
   );

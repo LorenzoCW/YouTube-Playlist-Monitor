@@ -2,11 +2,11 @@ import Plot from 'react-plotly.js';
 
 interface ChartProps {
   data: { x: number; y: number }[];
-  title: string;
+  chartTitle: string;
   color: string;
 }
 
-const Chart: React.FC<ChartProps> = ({ data, title, color }) => {
+const Chart: React.FC<ChartProps> = ({ data, chartTitle, color }) => {
   const x = data.map(pt => pt.x);
   const y = data.map(pt => pt.y);
 
@@ -18,14 +18,14 @@ const Chart: React.FC<ChartProps> = ({ data, title, color }) => {
         type: 'scatter',
         mode: 'lines+markers',
         marker: { color },
-        name: title,
+        name: chartTitle,
         hovertemplate: '%{x|%d/%m} - %{y}<extra></extra>'
       }]}
       layout={{
         plot_bgcolor: '#111111',
         paper_bgcolor: '#111111',
         title: {
-          text: title,
+          text: chartTitle,
           font: { color: '#6e6e6e' },
         },
         xaxis: {
@@ -34,7 +34,7 @@ const Chart: React.FC<ChartProps> = ({ data, title, color }) => {
           tickformat: '%d/%m'
         },
         yaxis: {
-          title,
+          title: chartTitle,
           color: color,
           side: 'right'
         },

@@ -38,7 +38,7 @@ const Chart: React.FC<ChartProps> = ({ data, title, color }) => {
           color: color,
           side: 'right'
         },
-        height: 375
+        height: 365
       }}
       style={{ width: '100%' }}
     />

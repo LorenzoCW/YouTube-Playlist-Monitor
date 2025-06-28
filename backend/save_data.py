@@ -71,7 +71,6 @@ def check_environment(firebase_credentials_info):
     
     return
 
-
 def init_firestore(firebase_credentials_path):
     message("Conectando ao Firestore...")
 
@@ -107,7 +106,6 @@ def upload_status(db, title, status, success=False):
     try:
         last_title = title + "_timestamp"
 
-        # timestamp = datetime.datetime.now(TIMEZONE).isoformat()
         timestamp = datetime.datetime.now(TIMEZONE)
         formatted_time = timestamp.strftime('%d/%m/%Y %H:%M:%S')
 
@@ -139,11 +137,13 @@ def upload_calc(db, collection, document, title, data):
 # -- collect and save --
 def check_data(db):
     message("Verificando se há dados existentes...")
+    
     try:
         doc_ref = db.collection("playlist_data").document(TODAY_STRING)
         doc = doc_ref.get()
         if not doc.exists:  # Não há dados no dia atual
             return message("Dados ainda não inseridos no banco.")
+        
         info_message = message(f"Dados para {TODAY_STRING} já salvos.", True)
         upload_status(db, "final_result", info_message, True)
         return
@@ -381,7 +381,7 @@ def init():
     message("Paramêtros inicializados.")
     return playlist_id, youtube_api_key, db
 
-def collect_and_save(playlist_id, youtube_api_key, db):
+def collect_and_save(db, playlist_id, youtube_api_key):
 
     message("Iniciando coleta e salvamento de dados...")
 
@@ -457,7 +457,7 @@ def main():
     playlist_id, youtube_api_key, db = init()
     if not playlist_id or not youtube_api_key or not db: return
 
-    response = collect_and_save(playlist_id, youtube_api_key, db)
+    response = collect_and_save(db, playlist_id, youtube_api_key)
     if not response: return
     
     data = parse_and_save_data(db)

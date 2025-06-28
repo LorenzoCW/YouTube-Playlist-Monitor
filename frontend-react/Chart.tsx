@@ -19,12 +19,18 @@ const Chart: React.FC<ChartProps> = ({ data, chartTitle, color }) => {
       font: { color: '#6e6e6e' },
     },
     xaxis: {
-      title: 'Data',
+      title: {
+        text: 'Data',
+        font: { color: '#f1f1f1' }
+      },
       color: '#f1f1f1',
       tickformat: '%d/%m'
     },
     yaxis: {
-      title: chartTitle,
+      title: {
+        text: chartTitle,
+        font: { color }
+      },
       color: color,
       side: 'right'
     },

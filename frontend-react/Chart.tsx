@@ -1,4 +1,5 @@
 import Plot from 'react-plotly.js';
+import { Layout } from 'plotly.js';
 
 interface ChartProps {
   data: { x: number; y: number }[];
@@ -9,6 +10,26 @@ interface ChartProps {
 const Chart: React.FC<ChartProps> = ({ data, chartTitle, color }) => {
   const x = data.map(pt => pt.x);
   const y = data.map(pt => pt.y);
+
+  const layout: Partial<Layout> = {
+    plot_bgcolor: '#111111',
+    paper_bgcolor: '#111111',
+    title: {
+      text: chartTitle,
+      font: { color: '#6e6e6e' },
+    },
+    xaxis: {
+      title: 'Data',
+      color: '#f1f1f1',
+      tickformat: '%d/%m'
+    },
+    yaxis: {
+      title: chartTitle,
+      color: color,
+      side: 'right'
+    },
+    height: 365
+  };
 
   return (
     <Plot
@@ -21,25 +42,7 @@ const Chart: React.FC<ChartProps> = ({ data, chartTitle, color }) => {
         name: chartTitle,
         hovertemplate: '%{x|%d/%m} - %{y}<extra></extra>'
       }]}
-      layout={{
-        plot_bgcolor: '#111111',
-        paper_bgcolor: '#111111',
-        title: {
-          text: chartTitle,
-          font: { color: '#6e6e6e' },
-        },
-        xaxis: {
-          title: 'Data',
-          color: '#f1f1f1',
-          tickformat: '%d/%m'
-        },
-        yaxis: {
-          title: chartTitle,
-          color: color,
-          side: 'right'
-        },
-        height: 365
-      }}
+      layout={layout}
       style={{ width: '100%' }}
     />
   );
